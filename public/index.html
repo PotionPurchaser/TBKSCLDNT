@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Nguyễn Khải Minh</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+  <!-- CSS only -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-iYQeCzEYFbKjA/T2uDLTpkwGzCiq6soy8tYaI1GyVh/UjpbCx/TYkiZhlZB6+fzT" crossorigin="anonymous" />
+</head>
+
+<body>
+  <div class="container px-4">
+    <header class="d-flex flex-wrap justify-content-center py-3 mb-4 border-bottom bcc-purle rounded">
+      <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-dark text-decoration-none">
+        <svg class="bi me-2" width="40" height="32">
+          <use xlink:href="#bootstrap"></use>
+        </svg>
+        <span class="fs-4 bcc-purle fw-bolder fs-2">Thiết bị quản lý chất lượng hồ nuôi tôm</span>
+      </a>
+    </header>
+
+    <div class="container px-4 " id="hanging-icons">
+      <div class="row g-4 py-5 row-cols-1 row-cols-lg-3">
+        <div class="col d-flex align-items-start">
+          <div>
+            <h3 class="fs-2 text-body-emphasis">Chọn chế độ</h3>
+            <p>Sử dụng nút chế độ thủ công nếu muốn tự mình thay đổi trạng thái của động cơ và bơm</p>
+            <div class="form-check form-switch">
+              <input class="form-check-input" type="checkbox" role="switch" id="mode">
+              <label class="form-check-label" for="mode" id="modeLabel">Tự động</label>
+            </div>
+          </div>
+        </div>
+        <div class="col d-flex align-items-start">
+          <div>
+            <h3 class="fs-2 text-body-emphasis">Điều khiển tạo khí Oxy</h3>
+            <p>Chỉ có thể điều khiển được nếu là chế độ thủ công. Làm quay cánh quạt để tăng lượng oxy hòa tan trong
+              nước</p>
+            <div class="form-check form-switch">
+              <input class="form-check-input" type="checkbox" role="switch" id="quat" disabled>
+              <label class="form-check-label" for="quat" id="quatLabel">Tắt</label>
+            </div>
+          </div>
+        </div>
+        <div class="col d-flex align-items-start">
+          <div>
+            <h3 class="fs-2 text-body-emphasis">Điều chỉnh bơm/van</h3>
+            <p>Chỉ có thể điều khiển được nếu là chế độ thủ công. Khởi động hệ thống bơm và van để thay đổi chỉ số pH
+            </p>
+            <div class="form-check form-switch">
+              <input class="form-check-input" type="checkbox" role="switch" id="bom" disabled>
+              <label class="form-check-label" for="bom" id="bomLabel">Tắt</label>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row g-5 mt-4">
+      <div class="col">
+        <div class="p-3 bcc-purle rounded">
+          <div class="p-2 bcc-purle2 fw-bold fs-3">Nhiệt độ không khí </div>
+          <div class="fw-bold mt-5">Hiện tại :</div>
+          <div id="temp" class="p-5 mb-5 fw-semibold fs-1 text-center border-bottom border-danger text-light">
+            20 độ C
+          </div>
+          <div class="fw-bold mb-4">Biểu đồ: </div>
+          <canvas class="bg-light my-3" id="tempChart"> </canvas>
+        </div>
+      </div>
+      <div class="col">
+        <div class="p-3 bcc-purle rounded">
+          <div class="p-2 bcc-purle2 fw-bold fs-3">Độ ẩm không khí</div>
+          <div class="fw-bold mt-5">Hiện tại :</div>
+          <div id="hum" class="p-5 mb-5 fw-semibold fs-1 text-center border-bottom border-danger text-light">
+            90 %
+          </div>
+          <div class="fw-bold mb-4">Biểu đồ: </div>
+          <canvas class="bg-light my-3" id="humChart"> </canvas>
+        </div>
+      </div>
+      <div class="col">
+        <div class="p-3 bcc-purle rounded">
+          <div class="p-2 bcc-purle2 fw-bold fs-3">CO2</div>
+          <div class="fw-bold mt-5">Hiện tại :</div>
+          <div id="co2" class="p-5 mb-5 fw-semibold fs-1 text-center border-bottom border-danger text-light">
+            900 ppm
+          </div>
+          <div class="fw-bold mb-4">Biểu đồ: </div>
+          <canvas class="bg-light my-3" id="co2Chart"> </canvas>
+        </div>
+      </div>
+    </div>
+    <div class="row g-5 mt-4">
+      <div class="col">
+        <div class="p-3 bcc-purle rounded">
+          <div class="p-2 bcc-purle2 fw-bold fs-3">Giá trị pH</div>
+          <div class="fw-bold mt-5">Hiện tại :</div>
+          <div id="ph" class="p-5 mb-5 fw-semibold fs-1 text-center border-bottom border-danger text-light">
+            6.0
+          </div>
+          <div class="fw-bold mb-4">Biểu đồ: </div>
+          <canvas class="bg-light my-3" id="phChart"> </canvas>
+        </div>
+      </div>
+      <div class="col">
+        <div class="p-3 bcc-purle rounded">
+          <div class="p-2 bcc-purle2 fw-bold fs-3">Thể tích dung dịch</div>
+          <div class="fw-bold mt-5">Hiện tại :</div>
+          <div id="v" class="p-5 mb-5 fw-semibold fs-1 text-center border-bottom border-danger text-light">
+            3.5 lít
+          </div>
+          <div class="fw-bold mb-4">Biểu đồ: </div>
+          <canvas class="bg-light my-3" id="vChart"> </canvas>
+        </div>
+      </div>
+    </div>
+    <div class="d-grid col-3 mx-auto my-3 align-items-end">
+      <button id="update" class="btn btn-info">Làm mới</button>
+    </div>
+  </div>
+
+  <!-- JavaScript Bundle with Popper -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-u1OknCvxWvY5kfmNBILK2hRnQC3Pr17a+RTT6rIHI7NnikvbZlHgTPOOmMi466C8"
+    crossorigin="anonymous"></script>
+
+  <!-- socket -->
+  <script src="../socket.io/socket.io.js"></script>
+  <script>
+    const temp = document.getElementById("temp");
+    const hum = document.getElementById("hum");
+    const co2 = document.getElementById("co2");
+    const ph = document.getElementById("ph");
+    const v = document.getElementById("v");
+    const update = document.getElementById("update");
+
+    const mode = document.getElementById("mode");
+    const modeLabel = document.getElementById("modeLabel");
+    const quat = document.getElementById("quat");
+    const bom = document.getElementById("bom");
+    const quatLabel = document.getElementById("quatLabel");
+    const bomLabel = document.getElementById("bomLabel");
+    let nutnhan = [quat, bom]
+
+    var socket = io();
+    socket.on('connect', function () {
+      console.log('Connected!');
+    });
+
+    update.addEventListener("click", () => {
+      socket.emit("UPDATE", "update");
+    });
+
+    function thucong() {
+      modeLabel.innerText = "Thủ công"
+      nutnhan.forEach(nut => {
+        nut.disabled = false
+      })
+    }
+
+    function tudong() {
+      modeLabel.innerText = "Tự động"
+      nutnhan.forEach(nut => {
+        nut.disabled = true
+      })
+    }
+
+    mode.addEventListener("change", (e) => {
+      if (e.target.checked == true) {
+        thucong();
+        socket.emit("changeMode", "thucong");
+      } else {
+        tudong();
+        socket.emit("changeMode", "tudong");
+      }
+    });
+    quat.addEventListener("change", (e) => {
+      if (e.target.checked == true) {
+        quatLabel.innerText = "Bật"
+        socket.emit("changeState1", "bat")
+      } else {
+        quatLabel.innerText = "Tắt"
+        socket.emit("changeState1", "tat")
+      }
+    })
+    bom.addEventListener("change", (e) => {
+      if (e.target.checked == true) {
+        bomLabel.innerText = "Bật"
+        socket.emit("changeState2", "bat")
+      } else {
+        bomLabel.innerText = "Tắt"
+        socket.emit("changeState2", "tat")
+      }
+    })
+
+    socket.on("changeMode", (data) => {
+      if (data == "thucong") {
+        mode.checked = true;
+        thucong();
+      }
+      else {
+        mode.checked = false;
+        tudong();
+      }
+    })
+
+    socket.on("changeState1", (data) => {
+      if (data == "bat") {
+        quat.checked = true;
+      }
+      else {
+        quat.checked = false;
+      }
+    })
+    socket.on("changeState2", (data) => {
+      if (data == "bat") {
+        bom.checked = true;
+      }
+      else {
+        bom.checked = false;
+      }
+    })
+
+    socket.on("message", (data) => {
+      console.log(data);
+      temp.innerText = `${data.temp} độ C`;
+      hum.innerText = `${data.hum} BPM`;
+      co2.innerText = `${data.MQ135} ppm`;
+      ph.innerText = `${data.pH} `;
+      v.innerText = `${data.thetich} Lít`;
+
+      if (data.mode == "true") {
+        mode.checked = true;
+        thucong();
+      } else {
+        mode.checked = false;
+        tudong();
+      }
+
+      quat.checked = data.fan == "true" ? true : false;
+      bom.checked = data.valve == "true" ? true : false;
+
+
+      addData(tempChart, data.temp);
+      addData(humChart, data.hum);
+      addData(co2Chart, data.MQ135);
+      addData(phChart, data.pH);
+      addData(vChart, data.thetich);
+      if (tempChart.data.datasets[0].data.length > 30) removeData(tempChart);
+      if (humChart.data.datasets[0].data.length > 30) removeData(humChart);
+      if (co2Chart.data.datasets[0].data.length > 30) removeData(co2Chart);
+      if (phChart.data.datasets[0].data.length > 30)
+        removeData(phChart);
+      if (vChart.data.datasets[0].data.length > 30) removeData(vChart);
+    });
+  </script>
+
+  <!-- chart -->
+  <script>
+    const configTempCharts = {
+      type: "line",
+      data: {
+        labels: [
+          60, 58, 56, 54, 52, 50, 48, 46, 44, 42, 40, 38, 36, 34, 32, 30, 28,
+          26, 24, 22, 20, 18, 16, 14, 12, 10, 8, 6, 4, 2, 0,
+        ],
+        datasets: [
+          {
+            label: "Temperature (Celsius)",
+            data: [],
+            borderColor: ["rgba(255, 100, 100, 1)"],
+            tension: 0.1,
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+      },
+    };
+    const configHumChart = {
+      type: "line",
+      data: {
+        labels: [
+          60, 58, 56, 54, 52, 50, 48, 46, 44, 42, 40, 38, 36, 34, 32, 30, 28,
+          26, 24, 22, 20, 18, 16, 14, 12, 10, 8, 6, 4, 2, 0,
+        ],
+        datasets: [
+          {
+            label: "Humidity (%)",
+            data: [],
+            borderColor: ["rgba(255, 100, 100, 1)"],
+            tension: 0.1,
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+      },
+    };
+    const configCo2Charts = {
+      type: "line",
+      data: {
+        labels: [
+          60, 58, 56, 54, 52, 50, 48, 46, 44, 42, 40, 38, 36, 34, 32, 30, 28,
+          26, 24, 22, 20, 18, 16, 14, 12, 10, 8, 6, 4, 2, 0,
+        ],
+        datasets: [
+          {
+            label: "CO2 rate (ppm)",
+            data: [],
+            borderColor: ["rgba(255, 100, 100, 1)"],
+            tension: 0.1,
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+      },
+    };
+    const configphChart = {
+      type: "line",
+      data: {
+        labels: [
+          60, 58, 56, 54, 52, 50, 48, 46, 44, 42, 40, 38, 36, 34, 32, 30, 28,
+          26, 24, 22, 20, 18, 16, 14, 12, 10, 8, 6, 4, 2, 0,
+        ],
+        datasets: [
+          {
+            label: "pH ",
+            data: [],
+            borderColor: ["rgba(255, 100, 100, 1)"],
+            tension: 0.1,
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+      },
+    };
+    const configvChart = {
+      type: "line",
+      data: {
+        labels: [
+          60, 58, 56, 54, 52, 50, 48, 46, 44, 42, 40, 38, 36, 34, 32, 30, 28,
+          26, 24, 22, 20, 18, 16, 14, 12, 10, 8, 6, 4, 2, 0,
+        ],
+        datasets: [
+          {
+            label: "Thể tích (lít) ",
+            data: [],
+            borderColor: ["rgba(255, 100, 100, 1)"],
+            tension: 0.1,
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+      },
+    };
+
+    const tempChart = new Chart(
+      document.getElementById("tempChart").getContext("2d"),
+      configTempCharts
+    );
+    const humChart = new Chart(
+      document.getElementById("humChart").getContext("2d"),
+      configHumChart
+    );
+    const co2Chart = new Chart(
+      document.getElementById("co2Chart").getContext("2d"),
+      configCo2Charts
+    );
+    const phChart = new Chart(
+      document.getElementById("phChart").getContext("2d"),
+      configphChart
+    );
+    const vChart = new Chart(
+      document.getElementById("vChart").getContext("2d"),
+      configvChart
+    );
+
+  </script>
+  <!-- update chart -->
+  <script>
+    function addData(chart, data) {
+      chart.data.datasets.forEach((dataset) => {
+        dataset.data.push(data);
+      });
+      chart.update();
+    }
+
+    function removeData(chart) {
+      chart.data.datasets.forEach((dataset) => {
+        dataset.data.shift();
+      });
+      chart.update();
+    }
+  </script>
+</body>
+
+</html>
